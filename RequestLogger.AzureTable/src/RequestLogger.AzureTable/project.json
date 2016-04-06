@@ -1,0 +1,24 @@
+﻿{
+  "version": "1.4.0-*",
+  "description": "RequestLogger.AzureTable Class Library",
+  "authors": [ "Игорь" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "frameworks": {
+    "dnx451": {
+      "dependencies": {
+      }
+    },
+    "dnxcore50": {
+      "dependencies": {
+      }
+    }
+  },
+  "dependencies": {
+    "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+    "System.Text.RegularExpressions": "4.0.11-beta-23516",
+    "WindowsAzure.Storage": "6.2.2-preview"
+  }
+}
