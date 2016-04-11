@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.4.5-*",
+  "version": "0.1.0-*",
   "description": "RequestLogger.AzureTable Class Library",
   "authors": [ "Игорь" ],
   "tags": [ "" ],
