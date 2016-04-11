@@ -9,10 +9,10 @@
             return builder.UseMiddleware<RequestLoggerMiddleware>();
         }
 
-        public static IApplicationBuilder UseRequestLogger(this IApplicationBuilder builder, string[] urlsPatterns, string azureConnectionString, string azureTableName)
+        public static IApplicationBuilder UseRequestLogger(this IApplicationBuilder builder, string azureConnectionString, string azureTableName, string[] urlsPatterns = null )
         {
 
-            return builder.UseMiddleware<RequestLoggerMiddleware>(new object[] { urlsPatterns, azureConnectionString, azureTableName });
+            return builder.UseMiddleware<RequestLoggerMiddleware>(new object[] { azureConnectionString, azureTableName, urlsPatterns });
         }
     }
 }

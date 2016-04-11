@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Diagnostics;
 
 namespace iflight.RequestLogger.AzureTable
 {
@@ -31,7 +33,7 @@ namespace iflight.RequestLogger.AzureTable
 
         private AzureTableService()
         {
-            throw new NotImplementedException("Use Create method!");
+            throw new NotImplementedException("Use Init method!");
         }
 
         private AzureTableService(string ConnectionString, string tableName)
@@ -53,7 +55,8 @@ namespace iflight.RequestLogger.AzureTable
 
         public async Task Log(string request, string response, string path, string query, long requestLenght, long responseLenght, int statusCode, long totalTime)
         {
-            LogEntity entity = new LogEntity(path.Replace('/','-'));
+
+            LogEntity entity = new LogEntity(path.Trim('/').Replace('/','-'));
             entity.RequestBody = request;
             entity.ResponseBody = response;
             entity.Path = path;
@@ -64,11 +67,8 @@ namespace iflight.RequestLogger.AzureTable
             entity.StatusCode = statusCode;
 
             TableOperation insertOperation = TableOperation.Insert(entity);
-            //TableBatchOperation batchOperation = new TableBatchOperation();
-            //batchOperation.Add(insertOperation);
             await cloudTable.ExecuteAsync(insertOperation);
 
         }
-
     }
 }

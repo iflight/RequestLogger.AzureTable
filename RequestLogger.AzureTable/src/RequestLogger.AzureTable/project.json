@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.4.0-*",
+  "version": "1.4.5-*",
   "description": "RequestLogger.AzureTable Class Library",
   "authors": [ "Игорь" ],
   "tags": [ "" ],
@@ -8,6 +8,7 @@
   "frameworks": {
     "dnx451": {
       "dependencies": {
+        "Microsoft.Net.Http": "2.2.22"
       }
     },
     "dnxcore50": {

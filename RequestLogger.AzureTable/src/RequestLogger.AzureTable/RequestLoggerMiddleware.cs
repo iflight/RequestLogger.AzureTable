@@ -61,7 +61,7 @@
 
                     
                     string requestBody = new StreamReader(context.Request.Body).ReadToEnd();
-                    string path = context.Request.Path;
+                    string path = context.Request.Host + context.Request.Path;
                     string query = context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "";
                     long requestLenght = context.Request.ContentLength.HasValue ? context.Request.ContentLength.Value : 0;
 
