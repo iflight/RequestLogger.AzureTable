@@ -55,7 +55,6 @@
                 {
                     _logger.LogInformation("Log to Azure...");
 
-                    var requestStream = new MemoryStream();
                     var requestBuffer = new MemoryStream();
                     await context.Request.Body.CopyToAsync(requestBuffer);
                     
@@ -67,9 +66,7 @@
                     var requestReader = new StreamReader(requestBuffer);
                     string requestBody = await requestReader.ReadToEndAsync();
                     requestBuffer.Seek(0, SeekOrigin.Begin);
-                    await requestBuffer.CopyToAsync(requestStream);
-                    requestStream.Seek(0, SeekOrigin.Begin);
-                    context.Request.Body = requestStream;
+                    context.Request.Body = new MemoryStream(requestBuffer.ToArray());
 
                     string path = context.Request.Host + context.Request.Path;
                     string query = context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "";

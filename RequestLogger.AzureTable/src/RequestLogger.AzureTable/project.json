@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.0.5-*",
+  "version": "0.0.6-*",
   "description": "RequestLogger.AzureTable Class Library",
   "authors": [ "Igor Vinogradov" ],
   "releaseNotes": "fix empty body in middleware",
