@@ -4,12 +4,11 @@
     using System.Threading.Tasks;
     using Microsoft.AspNet.Builder;
     using Microsoft.AspNet.Http;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Table;
     using System.IO;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Diagnostics;
+
     public class RequestLoggerMiddleware
     {
         private readonly RequestDelegate _next;
@@ -55,36 +54,41 @@
                 try
                 {
                     _logger.LogInformation("Log to Azure...");
-                    var stream = context.Response.Body;
-                    var buffer = new MemoryStream();
-                    context.Response.Body = buffer;
 
-                    
-                    string requestBody = new StreamReader(context.Request.Body).ReadToEnd();
+                    var requestBuffer = new MemoryStream();
+                    await context.Request.Body.CopyToAsync(requestBuffer);
+
+                    var responseStream = context.Response.Body;
+                    var responseBuffer = new MemoryStream();
+                    context.Response.Body = responseBuffer;
+
+                    requestBuffer.Seek(0, SeekOrigin.Begin);
+                    var requestReader = new StreamReader(requestBuffer);
+                    string requestBody = await requestReader.ReadToEndAsync();
+
                     string path = context.Request.Host + context.Request.Path;
                     string query = context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "";
-                    long requestLenght = context.Request.ContentLength.HasValue ? context.Request.ContentLength.Value : 0;
+                    long requestLenght = context.Request.ContentLength.HasValue ? context.Request.ContentLength.Value : responseBuffer.Length;
 
                     await _next(context);
                     sw.Stop();
 
-                    buffer.Seek(0, SeekOrigin.Begin);
-                    var reader = new StreamReader(buffer);
+                    responseBuffer.Seek(0, SeekOrigin.Begin);
+                    var reader = new StreamReader(responseBuffer);
                     string responseBody = await reader.ReadToEndAsync();
+                    responseBuffer.Seek(0, SeekOrigin.Begin);
+                    await responseBuffer.CopyToAsync(responseStream);
 
-                    buffer.Seek(0, SeekOrigin.Begin);
-                    await buffer.CopyToAsync(stream);
-
-                    long responseLenght = context.Response.ContentLength.HasValue ? context.Response.ContentLength.Value : buffer.Length;
+                    long responseLenght = context.Response.ContentLength.HasValue ? context.Response.ContentLength.Value : responseBuffer.Length;
                     int code = context.Response.StatusCode;
 
-                    await AzureTableService.Instance.Log(requestBody, responseBody,path,query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
+                    await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
 
-                    _logger.LogInformation("Log to Azure complite");
+                    _logger.LogInformation("Log to Azure complete");
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e.StackTrace +"\r\n"+e.Message);
+                    _logger.LogError(e.StackTrace + "\r\n" + e.Message);
                 }
             }
             else

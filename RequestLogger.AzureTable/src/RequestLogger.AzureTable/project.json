@@ -1,14 +1,15 @@
 ﻿{
-  "version": "0.1.0-*",
+  "version": "0.0.3-*",
   "description": "RequestLogger.AzureTable Class Library",
-  "authors": [ "Игорь" ],
+  "authors": [ "Igor Vinogradov" ],
+  "releaseNotes": "Microsoft.Net.Http replaced by System.Net.Http",
   "tags": [ "" ],
-  "projectUrl": "",
+  "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
   "licenseUrl": "",
   "frameworks": {
     "dnx451": {
       "dependencies": {
-        "Microsoft.Net.Http": "2.2.22"
+        "System.Net.Http": "4.0.1-beta-23516"
       }
     },
     "dnxcore50": {

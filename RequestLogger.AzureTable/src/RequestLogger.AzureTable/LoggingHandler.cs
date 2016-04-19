@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,9 +19,8 @@ namespace iflight.RequestLogger.AzureTable
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
 
-
             string requestBody = request.Content != null ? await request.Content.ReadAsStringAsync() : "";
-            string path = request.RequestUri.AbsoluteUri;
+            string path = String.Format("{0}{1}", request.RequestUri.Authority, request.RequestUri.AbsolutePath);
             string query = request.RequestUri.Query;
             long requestLenght = request.Content != null ? (await request.Content.ReadAsStreamAsync()).Length : 0;
             var sw = new Stopwatch();
