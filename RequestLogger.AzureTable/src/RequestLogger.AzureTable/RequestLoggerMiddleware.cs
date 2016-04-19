@@ -88,8 +88,7 @@
                     int code = context.Response.StatusCode;
 
                     await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
-                    var test = new StreamReader(context.Request.Body).ReadToEnd();
-                    _logger.LogInformation("END "+ test);
+
                     _logger.LogInformation("Log to Azure complete");
                 }
                 catch (Exception e)
