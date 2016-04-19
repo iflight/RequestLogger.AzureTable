@@ -1,8 +1,8 @@
 ﻿{
-  "version": "0.0.3-*",
+  "version": "0.0.4-*",
   "description": "RequestLogger.AzureTable Class Library",
   "authors": [ "Igor Vinogradov" ],
-  "releaseNotes": "Microsoft.Net.Http replaced by System.Net.Http",
+  "releaseNotes": "fix empty body in middleware",
   "tags": [ "" ],
   "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
   "licenseUrl": "",
