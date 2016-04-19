@@ -55,9 +55,9 @@
                 {
                     _logger.LogInformation("Log to Azure...");
 
-                    var requestStream = context.Request.Body;
+                    var requestStream = new MemoryStream();
                     var requestBuffer = new MemoryStream();
-                    context.Request.Body = requestBuffer;
+                    await context.Request.Body.CopyToAsync(requestBuffer);
                     
                     var responseStream = context.Response.Body;
                     var responseBuffer = new MemoryStream();
@@ -66,6 +66,9 @@
                     requestBuffer.Seek(0, SeekOrigin.Begin);
                     var requestReader = new StreamReader(requestBuffer);
                     string requestBody = await requestReader.ReadToEndAsync();
+                    requestBuffer.Seek(0, SeekOrigin.Begin);
+                    await requestBuffer.CopyToAsync(requestStream);
+                    requestStream.Seek(0, SeekOrigin.Begin);
                     context.Request.Body = requestStream;
 
                     string path = context.Request.Host + context.Request.Path;
@@ -85,7 +88,8 @@
                     int code = context.Response.StatusCode;
 
                     await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
-
+                    var test = new StreamReader(context.Request.Body).ReadToEnd();
+                    _logger.LogInformation("END "+ test);
                     _logger.LogInformation("Log to Azure complete");
                 }
                 catch (Exception e)

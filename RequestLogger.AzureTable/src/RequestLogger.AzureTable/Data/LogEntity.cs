@@ -11,9 +11,11 @@ namespace iflight.RequestLogger.AzureTable.Data
         public LogEntity(string partitionKey)
         {
             this.PartitionKey = partitionKey;
-            this.RowKey = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffff");
+            this.RowKey =  string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
+            this.RequestDateTime = DateTime.Now;
         }
 
+        public DateTime RequestDateTime { get; set; }
         public string Path { get; set; }
         public string Query { get; set; }
         public int StatusCode { get; set; }
