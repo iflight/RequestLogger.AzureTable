@@ -57,13 +57,11 @@
                 var requestBuffer = new MemoryStream();
                 await context.Request.Body.CopyToAsync(requestBuffer);
 
-
-
                 requestBuffer.Seek(0, SeekOrigin.Begin);
                 var requestReader = new StreamReader(requestBuffer);
                 string requestBody = await requestReader.ReadToEndAsync();
                 requestBuffer.Seek(0, SeekOrigin.Begin);
-                context.Request.Body = new MemoryStream(requestBuffer.ToArray());
+                context.Request.Body = requestBuffer;
 
                 string path = context.Request.Host + context.Request.Path;
                 string query = context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "";
@@ -88,13 +86,15 @@
                     responseBody = await reader.ReadToEndAsync();
                     responseBuffer.Seek(0, SeekOrigin.Begin);
                     await responseBuffer.CopyToAsync(responseStream);
-
+                    
                     responseLenght = context.Response.ContentLength.HasValue ? context.Response.ContentLength.Value : responseBuffer.Length;
                     code = context.Response.StatusCode;
                 }
                 catch (Exception e)
                 {
                     responseBody = e.Message + "\r\n" + e.StackTrace;
+
+                    _logger.LogInformation(e.Message + "\r\n" + e.StackTrace);
                 }
 
                 await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
