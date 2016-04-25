@@ -24,14 +24,21 @@ namespace iflight.RequestLogger.AzureTable
             string query = request.RequestUri.Query;
             long requestLenght = request.Content != null ? (await request.Content.ReadAsStreamAsync()).Length : 0;
             var sw = new Stopwatch();
-            sw.Start();
-            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-            sw.Stop();
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            long responseLenght = (await response.Content.ReadAsStreamAsync()).Length;
-            int code = (int)response.StatusCode;
-
+            HttpResponseMessage response = null;
+            string responseBody = string.Empty;
+            long responseLenght = 0;
+            int code = 0;
+            try {
+                sw.Start();
+                response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                sw.Stop();
+                responseBody = await response.Content.ReadAsStringAsync();
+                responseLenght = (await response.Content.ReadAsStreamAsync()).Length;
+                code = (int)response.StatusCode;
+            } catch(Exception e)
+            {
+                responseBody = e.Message + "\r\n" + e.StackTrace;
+            }
             await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
             return response;
         }

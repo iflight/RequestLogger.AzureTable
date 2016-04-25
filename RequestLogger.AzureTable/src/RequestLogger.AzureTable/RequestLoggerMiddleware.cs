@@ -27,7 +27,7 @@
         public async Task Invoke(HttpContext context)
         {
             var sw = new Stopwatch();
-            sw.Start();
+
 
             string requestUrl = context.Request.Host + context.Request.Path;
             bool needLogged = false;
@@ -51,47 +51,56 @@
             }
             if (needLogged)
             {
+
+                _logger.LogInformation("Log to Azure...");
+
+                var requestBuffer = new MemoryStream();
+                await context.Request.Body.CopyToAsync(requestBuffer);
+
+
+
+                requestBuffer.Seek(0, SeekOrigin.Begin);
+                var requestReader = new StreamReader(requestBuffer);
+                string requestBody = await requestReader.ReadToEndAsync();
+                requestBuffer.Seek(0, SeekOrigin.Begin);
+                context.Request.Body = new MemoryStream(requestBuffer.ToArray());
+
+                string path = context.Request.Host + context.Request.Path;
+                string query = context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "";
+                long requestLenght = context.Request.ContentLength.HasValue ? context.Request.ContentLength.Value : requestBuffer.Length;
+
+                var responseStream = context.Response.Body;
+                var responseBuffer = new MemoryStream();
+                context.Response.Body = responseBuffer;
+
+                string responseBody = string.Empty;
+                long responseLenght = 0;
+                int code = 0;
+
                 try
                 {
-                    _logger.LogInformation("Log to Azure...");
-
-                    var requestBuffer = new MemoryStream();
-                    await context.Request.Body.CopyToAsync(requestBuffer);
-                    
-                    var responseStream = context.Response.Body;
-                    var responseBuffer = new MemoryStream();
-                    context.Response.Body = responseBuffer;
-
-                    requestBuffer.Seek(0, SeekOrigin.Begin);
-                    var requestReader = new StreamReader(requestBuffer);
-                    string requestBody = await requestReader.ReadToEndAsync();
-                    requestBuffer.Seek(0, SeekOrigin.Begin);
-                    context.Request.Body = new MemoryStream(requestBuffer.ToArray());
-
-                    string path = context.Request.Host + context.Request.Path;
-                    string query = context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "";
-                    long requestLenght = context.Request.ContentLength.HasValue ? context.Request.ContentLength.Value : responseBuffer.Length;
-
+                    sw.Start();
                     await _next(context);
                     sw.Stop();
 
                     responseBuffer.Seek(0, SeekOrigin.Begin);
                     var reader = new StreamReader(responseBuffer);
-                    string responseBody = await reader.ReadToEndAsync();
+                    responseBody = await reader.ReadToEndAsync();
                     responseBuffer.Seek(0, SeekOrigin.Begin);
                     await responseBuffer.CopyToAsync(responseStream);
 
-                    long responseLenght = context.Response.ContentLength.HasValue ? context.Response.ContentLength.Value : responseBuffer.Length;
-                    int code = context.Response.StatusCode;
-
-                    await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
-
-                    _logger.LogInformation("Log to Azure complete");
+                    responseLenght = context.Response.ContentLength.HasValue ? context.Response.ContentLength.Value : responseBuffer.Length;
+                    code = context.Response.StatusCode;
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e.StackTrace + "\r\n" + e.Message);
+                    responseBody = e.Message + "\r\n" + e.StackTrace;
                 }
+
+                await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
+
+                _logger.LogInformation("Log to Azure complete");
+
             }
             else
             {
