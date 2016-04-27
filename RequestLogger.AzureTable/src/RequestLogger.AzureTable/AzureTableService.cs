@@ -53,7 +53,7 @@ namespace iflight.RequestLogger.AzureTable
             await instance.cloudTable.CreateIfNotExistsAsync();
         }
 
-        public async Task Log(string request, string response, string path, string query, long requestLenght, long responseLenght, int statusCode, long totalTime)
+        public async Task Log(string request, string response, string path, string query, long requestLenght, long responseLenght, int statusCode, long totalTime, string exception)
         {
 
             LogEntity entity = new LogEntity(path.Trim('/').Replace('/','-'));
@@ -65,6 +65,7 @@ namespace iflight.RequestLogger.AzureTable
             entity.ResponseBodyLength = responseLenght;
             entity.TotalTime = totalTime;
             entity.StatusCode = statusCode;
+            entity.Exception = exception;
 
             TableOperation insertOperation = TableOperation.Insert(entity);
             await cloudTable.ExecuteAsync(insertOperation);

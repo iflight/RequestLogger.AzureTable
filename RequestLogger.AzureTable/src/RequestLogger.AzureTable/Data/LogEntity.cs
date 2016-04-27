@@ -24,6 +24,7 @@ namespace iflight.RequestLogger.AzureTable.Data
         public string ResponseBody { get; set; }
         public long RequestBodyLength { get; set; }
         public long ResponseBodyLength { get; set; }
+        public string Exception { get; set; }
 
     }
 }

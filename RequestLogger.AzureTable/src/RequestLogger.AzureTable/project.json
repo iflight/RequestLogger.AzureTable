@@ -1,8 +1,8 @@
 ﻿{
-  "version": "0.0.7-*",
+  "version": "0.0.8-*",
   "description": "RequestLogger.AzureTable Class Library",
   "authors": [ "Igor Vinogradov" ],
-  "releaseNotes": "fix empty body in middleware",
+  "releaseNotes": "exception logging in exception field",
   "tags": [ "" ],
   "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
   "licenseUrl": "",

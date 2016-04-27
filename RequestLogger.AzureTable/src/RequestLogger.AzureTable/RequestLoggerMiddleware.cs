@@ -75,6 +75,7 @@
                 long responseLenght = 0;
                 int code = 0;
 
+                string exception = string.Empty;
                 try
                 {
                     sw.Start();
@@ -92,12 +93,12 @@
                 }
                 catch (Exception e)
                 {
-                    responseBody = e.Message + "\r\n" + e.StackTrace;
+                    exception = e.Message + "\r\n" + e.StackTrace;
 
                     _logger.LogInformation(e.Message + "\r\n" + e.StackTrace);
                 }
 
-                await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
+                await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
 
                 _logger.LogInformation("Log to Azure complete");
 

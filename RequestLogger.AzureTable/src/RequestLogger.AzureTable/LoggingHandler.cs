@@ -28,18 +28,22 @@ namespace iflight.RequestLogger.AzureTable
             string responseBody = string.Empty;
             long responseLenght = 0;
             int code = 0;
-            try {
+            string exception = string.Empty;
+
+            try
+            {
                 sw.Start();
                 response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
                 sw.Stop();
                 responseBody = await response.Content.ReadAsStringAsync();
                 responseLenght = (await response.Content.ReadAsStreamAsync()).Length;
                 code = (int)response.StatusCode;
-            } catch(Exception e)
-            {
-                responseBody = e.Message + "\r\n" + e.StackTrace;
             }
-            await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds);
+            catch (Exception e)
+            {
+                exception = e.Message + "\r\n" + e.StackTrace;
+            }
+            await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
             return response;
         }
     }
