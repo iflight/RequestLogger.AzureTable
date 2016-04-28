@@ -21,7 +21,7 @@
             _urlsPatterns = urlsPatterns;
             _logger = loggerFactory.CreateLogger<RequestLoggerMiddleware>();
 
-            AzureTableService.Init(azureConnectionString, azureTableName);
+            AzureTableService.Init(azureConnectionString, azureTableName, loggerFactory);
         }
 
         public async Task Invoke(HttpContext context)
@@ -38,17 +38,15 @@
                     if (Regex.Match(requestUrl, pattern).Success)
                     {
                         needLogged = true;
-                    };
-                    if (needLogged)
-                    {
                         break;
-                    }
+                    };
                 }
             }
             else
             {
                 needLogged = true;
             }
+
             if (needLogged)
             {
 
@@ -98,7 +96,7 @@
                     _logger.LogInformation(e.Message + "\r\n" + e.StackTrace);
                 }
 
-                await AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
+                AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
 
                 _logger.LogInformation("Log to Azure complete");
 

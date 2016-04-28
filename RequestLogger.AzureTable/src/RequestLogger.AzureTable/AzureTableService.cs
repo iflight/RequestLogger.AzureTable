@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net.Http;
-using System.Diagnostics;
+using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
 
 namespace iflight.RequestLogger.AzureTable
 {
@@ -27,36 +27,46 @@ namespace iflight.RequestLogger.AzureTable
 
         }
 
+        private ILogger logger;
+
         private CloudTable cloudTable;
 
         private Task azureTableTask;
+
+        private ConcurrentQueue<TableOperation> queue;
 
         private AzureTableService()
         {
             throw new NotImplementedException("Use Init method!");
         }
 
-        private AzureTableService(string ConnectionString, string tableName)
+        private AzureTableService(string ConnectionString, string tableName, ILoggerFactory loggerFactory)
         {
-            CloudStorageAccount mySA = CloudStorageAccount.Parse(ConnectionString);
-            var table = mySA.CreateCloudTableClient();
+            logger = loggerFactory.CreateLogger<AzureTableService>();
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConnectionString);
+            var table = storageAccount.CreateCloudTableClient();
             cloudTable = table.GetTableReference(tableName);
+            queue = new ConcurrentQueue<TableOperation>();
+            azureTableTask = new Task(async () => await SaveLoop());
+            azureTableTask.Start();
         }
 
-        public async static void Init(string ConnectionString, string tableName)
+        public async static void Init(string ConnectionString, string tableName, ILoggerFactory loggerFactory)
         {
             if (instance != null)
             {
                 return;
             }
-            instance = new AzureTableService(ConnectionString, tableName);
+            instance = new AzureTableService(ConnectionString, tableName, loggerFactory);
             await instance.cloudTable.CreateIfNotExistsAsync();
+
+
         }
 
-        public async Task Log(string request, string response, string path, string query, long requestLenght, long responseLenght, int statusCode, long totalTime, string exception)
+        public void Log(string request, string response, string path, string query, long requestLenght, long responseLenght, int statusCode, long totalTime, string exception)
         {
 
-            LogEntity entity = new LogEntity(path.Trim('/').Replace('/','-'));
+            LogEntity entity = new LogEntity(path.Trim('/').Replace('/', '-'));
             entity.RequestBody = request;
             entity.ResponseBody = response;
             entity.Path = path;
@@ -67,9 +77,32 @@ namespace iflight.RequestLogger.AzureTable
             entity.StatusCode = statusCode;
             entity.Exception = exception;
 
-            TableOperation insertOperation = TableOperation.Insert(entity);
-            await cloudTable.ExecuteAsync(insertOperation);
 
+            TableOperation insertOperation = TableOperation.Insert(entity);
+            // await cloudTable.ExecuteAsync(insertOperation);
+            queue.Enqueue(insertOperation);
+        }
+
+        private async Task SaveLoop()
+        {
+            while (true)
+            {
+                try {
+                    if (queue.Any())
+                    {
+                        TableOperation operation = null;
+                        queue.TryDequeue(out operation);
+                        if (operation != null)
+                        {
+                            await cloudTable.ExecuteAsync(operation);
+                            logger.LogInformation("Entity saved to Azure Table");
+                        }
+                    }
+                }catch(Exception e)
+                {
+                    logger.LogError(e.Message + "\r\n" + e.StackTrace);
+                }
+            }
         }
     }
 }
