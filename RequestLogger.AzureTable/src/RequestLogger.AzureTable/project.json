@@ -1,8 +1,8 @@
 ﻿{
-  "version": "0.0.8-*",
+  "version": "0.0.9-*",
   "description": "RequestLogger.AzureTable Class Library",
   "authors": [ "Igor Vinogradov" ],
-  "releaseNotes": "exception logging in exception field",
+  "releaseNotes": "Write to Azure Table in background thread",
   "tags": [ "" ],
   "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
   "licenseUrl": "",
