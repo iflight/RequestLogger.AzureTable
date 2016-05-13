@@ -5,7 +5,7 @@
   "releaseNotes": "Saving logs to Azure Table Storage as batch",
   "tags": [ "" ],
   "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
-  "licenseUrl": "",
+  "licenseUrl": "https://github.com/iflight/RequestLogger.AzureTable/blob/master/LICENSE.txt",
   "frameworks": {
     "dnx451": {
       "dependencies": {
