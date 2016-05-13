@@ -1,12 +1,12 @@
 ﻿using iflight.RequestLogger.AzureTable.Data;
+using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using Microsoft.Extensions.Logging;
 
 namespace iflight.RequestLogger.AzureTable
 {
@@ -27,39 +27,45 @@ namespace iflight.RequestLogger.AzureTable
 
         }
 
+        public readonly TimeSpan defaultInterval = new TimeSpan(0, 0, 20);
+
         private ILogger logger;
 
         private CloudTable cloudTable;
 
         private Task azureTableTask;
 
-        private ConcurrentQueue<TableOperation> queue;
+        private Mutex mtx = new Mutex();
+
+        private List<LogEntity> logEntities;
+
+        private TimeSpan saveInterval;
 
         private AzureTableService()
         {
             throw new NotImplementedException("Use Init method!");
         }
 
-        private AzureTableService(string ConnectionString, string tableName, ILoggerFactory loggerFactory)
+        private AzureTableService(string ConnectionString, string tableName, ILoggerFactory loggerFactory, TimeSpan? interval = null)
         {
             logger = loggerFactory.CreateLogger<AzureTableService>();
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConnectionString);
             var table = storageAccount.CreateCloudTableClient();
             cloudTable = table.GetTableReference(tableName);
-            queue = new ConcurrentQueue<TableOperation>();
+            logEntities = new List<LogEntity>();
+            saveInterval = interval.HasValue ? interval.Value : defaultInterval;
             azureTableTask = new Task(async () => await SaveLoop());
             azureTableTask.Start();
         }
 
-        public async static void Init(string ConnectionString, string tableName, ILoggerFactory loggerFactory)
+        public async static void Init(string ConnectionString, string tableName, ILoggerFactory loggerFactory, TimeSpan? interval = null)
         {
             if (instance != null)
             {
                 return;
             }
-            instance = new AzureTableService(ConnectionString, tableName, loggerFactory);
+            instance = new AzureTableService(ConnectionString, tableName, loggerFactory, interval);
             await instance.cloudTable.CreateIfNotExistsAsync();
-
 
         }
 
@@ -77,31 +83,45 @@ namespace iflight.RequestLogger.AzureTable
             entity.StatusCode = statusCode;
             entity.Exception = exception;
 
-
-            TableOperation insertOperation = TableOperation.Insert(entity);
-            // await cloudTable.ExecuteAsync(insertOperation);
-            queue.Enqueue(insertOperation);
+            mtx.WaitOne();
+            logEntities.Add(entity);
+            mtx.ReleaseMutex();
         }
 
         private async Task SaveLoop()
         {
             while (true)
             {
-                try {
-                    if (queue.Any())
+                logger.LogInformation("Try to save log to Azure Table");
+                try
+                {
+                    if (logEntities.Any())
                     {
-                        TableOperation operation = null;
-                        queue.TryDequeue(out operation);
-                        if (operation != null)
+                        mtx.WaitOne();
+                        var entities = logEntities.Take(100).ToList();
+                        logEntities.RemoveRange(0, entities.Count);
+                        mtx.ReleaseMutex();
+
+                        var entitiesGroups = entities.GroupBy(x => x.PartitionKey);
+                        foreach (var entityGroup in entitiesGroups)
                         {
-                            await cloudTable.ExecuteAsync(operation);
-                            logger.LogInformation("Entity saved to Azure Table");
+                            TableBatchOperation batch = new TableBatchOperation();
+                            foreach (var entity in entityGroup)
+                            {
+                                batch.Add(TableOperation.Insert(entity));
+                            }
+
+                            await cloudTable.ExecuteBatchAsync(batch);
                         }
+
+                        logger.LogInformation(String.Format("{0} entities saved to Azure Table in {1} batches", entities.Count, entitiesGroups.Count()));
                     }
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     logger.LogError(e.Message + "\r\n" + e.StackTrace);
                 }
+                System.Threading.Thread.Sleep(saveInterval);
             }
         }
     }

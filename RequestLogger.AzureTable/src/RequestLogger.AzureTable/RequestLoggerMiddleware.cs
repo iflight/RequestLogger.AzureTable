@@ -15,13 +15,13 @@
         private readonly ILogger _logger;
         private string[] _urlsPatterns;
 
-        public RequestLoggerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, string azureConnectionString, string azureTableName, string[] urlsPatterns = null)
+        public RequestLoggerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, string azureConnectionString, string azureTableName, string[] urlsPatterns = null, TimeSpan? interval = null)
         {
             _next = next;
             _urlsPatterns = urlsPatterns;
             _logger = loggerFactory.CreateLogger<RequestLoggerMiddleware>();
 
-            AzureTableService.Init(azureConnectionString, azureTableName, loggerFactory);
+            AzureTableService.Init(azureConnectionString, azureTableName, loggerFactory, interval);
         }
 
         public async Task Invoke(HttpContext context)
@@ -50,7 +50,7 @@
             if (needLogged)
             {
 
-                _logger.LogInformation("Log to Azure...");
+                _logger.LogInformation("Log to RequestLogger...");
 
                 var requestBuffer = new MemoryStream();
                 await context.Request.Body.CopyToAsync(requestBuffer);
@@ -98,7 +98,7 @@
 
                 AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
 
-                _logger.LogInformation("Log to Azure complete");
+                _logger.LogInformation("Log to RequestLogger complete");
 
             }
             else

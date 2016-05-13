@@ -1,8 +1,8 @@
 ﻿{
-  "version": "0.0.9-*",
+  "version": "0.1.0",
   "description": "RequestLogger.AzureTable Class Library",
   "authors": [ "Igor Vinogradov" ],
-  "releaseNotes": "Write to Azure Table in background thread",
+  "releaseNotes": "Saving logs to Azure Table Storage as batch",
   "tags": [ "" ],
   "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
   "licenseUrl": "",
