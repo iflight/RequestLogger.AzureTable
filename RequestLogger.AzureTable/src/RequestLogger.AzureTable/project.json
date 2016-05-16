@@ -1,9 +1,10 @@
 ﻿{
   "version": "0.1.0",
-  "description": "RequestLogger.AzureTable Class Library",
+  "description": "RequestLogger.AzureTable Class Library allows to log requests to Azure Table Storage",
   "authors": [ "Igor Vinogradov" ],
   "releaseNotes": "Saving logs to Azure Table Storage as batch",
-  "tags": [ "" ],
+  "tags": [ "logging", "aspnet", "azure" ],
+  "copyright": "Igor Vinogradov, 2016",
   "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
   "licenseUrl": "https://github.com/iflight/RequestLogger.AzureTable/blob/master/LICENSE.txt",
   "frameworks": {
