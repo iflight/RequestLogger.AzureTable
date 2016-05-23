@@ -1,7 +1,10 @@
-﻿namespace Microsoft.AspNet.Builder
+﻿namespace Microsoft.AspNetCore.Builder
 {
+    using AspNetCore.Builder;
     using iflight.RequestLogger.AzureTable;
+    using Microsoft.Extensions.Logging;
     using System;
+
     public static class RequestLoggerExtensions
     {
         /// <summary>

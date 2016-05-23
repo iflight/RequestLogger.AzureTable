@@ -2,13 +2,11 @@
 {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using Microsoft.AspNet.Builder;
-    using Microsoft.AspNet.Http;
     using System.IO;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Diagnostics;
-
+    using Microsoft.AspNetCore.Http;
     public class RequestLoggerMiddleware
     {
         private readonly RequestDelegate _next;

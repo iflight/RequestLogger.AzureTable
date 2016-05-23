@@ -1,27 +1,39 @@
 ﻿{
-  "version": "0.1.0",
-  "description": "RequestLogger.AzureTable Class Library allows to log requests to Azure Table Storage",
-  "authors": [ "Igor Vinogradov" ],
-  "releaseNotes": "Saving logs to Azure Table Storage as batch",
-  "tags": [ "logging", "aspnet", "azure" ],
+  "version": "0.2.0",
+  "title": "RequestLogger.AzureTable",
   "copyright": "Igor Vinogradov, 2016",
-  "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
-  "licenseUrl": "https://github.com/iflight/RequestLogger.AzureTable/blob/master/LICENSE.txt",
+  "packOptions": {
+    "summary": "RequestLogger.AzureTable Class Library allows to log requests to Azure Table Storage",
+    "tags": [ "logging", "aspnet", "aspnetcore", "azure" ],
+    "owners": [ "Igor Vinogradov" ],
+    "releaseNotes": "Upgrade to RC2",
+    "licenseUrl": "https://github.com/iflight/RequestLogger.AzureTable/blob/master/LICENSE.txt",
+    "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/iflight/RequestLogger.AzureTable.git"
+    }
+  },
   "frameworks": {
-    "dnx451": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Runtime": {
+          "type": "build"
+        }
+      },
       "dependencies": {
-        "System.Net.Http": "4.0.1-beta-23516"
+        "System.Net.Http": "4.0.0"
       }
     },
-    "dnxcore50": {
+    "netstandard1.0": {
       "dependencies": {
-      }
+      },
+      "imports": [ "dnxcore50", "net40" ]
     }
   },
   "dependencies": {
-    "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
-    "System.Text.RegularExpressions": "4.0.11-beta-23516",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final",
     "WindowsAzure.Storage": "6.2.2-preview"
   }
 }
