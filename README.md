@@ -8,7 +8,14 @@ In Startup.cs:
         public async void Configure(IApplicationBuilder app,ILoggerFactory loggerfactory)
         {
             ...
-            app.UseRequestLogger( "AzureStorageConnectionString", "AzureTableName", new string[] { "observeblePath1","observeblePath2" });
+            app.UseRequestLogger(new RequestLoggerOptions()
+            {
+                AzureConnectionString = "UseDevelopmentStorage=true;",
+                AzureTableName = "AzureLoggerDemo",
+                UrlsPatterns = new string[] { "demo" },
+                Interval = new TimeSpan(0,0,30)   
+                
+            });
             ...
         }
   ```
