@@ -1,12 +1,12 @@
 ﻿{
-  "version": "0.2.0",
+  "version": "0.3.0",
   "title": "RequestLogger.AzureTable",
   "copyright": "Igor Vinogradov, 2016",
   "packOptions": {
     "summary": "RequestLogger.AzureTable Class Library allows to log requests to Azure Table Storage",
     "tags": [ "logging", "aspnet", "aspnetcore", "azure" ],
     "owners": [ "Igor Vinogradov" ],
-    "releaseNotes": "Upgrade to RC2",
+    "releaseNotes": "RequestLoggerOptions added",
     "licenseUrl": "https://github.com/iflight/RequestLogger.AzureTable/blob/master/LICENSE.txt",
     "projectUrl": "https://github.com/iflight/RequestLogger.AzureTable",
     "repository": {
@@ -34,6 +34,7 @@
   "dependencies": {
     "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
     "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Options": "1.0.0-rc2-final",
     "WindowsAzure.Storage": "6.2.2-preview"
   }
 }

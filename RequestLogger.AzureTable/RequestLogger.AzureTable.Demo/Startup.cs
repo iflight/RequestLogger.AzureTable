@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using iflight.RequestLogger.AzureTable;
 
 namespace RequestLogger.AzureTable.Demo
 {
@@ -18,12 +19,6 @@ namespace RequestLogger.AzureTable.Demo
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
-            }
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -43,9 +38,13 @@ namespace RequestLogger.AzureTable.Demo
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-           app.UseStaticFiles();
-
-            app.UseRequestLogger(@"UseDevelopmentStorage=true;", "AzureLoggerDemo", new string[] { "demo" }, new TimeSpan(0, 0, 30));
+            app.UseStaticFiles();
+            //@"UseDevelopmentStorage=true;", "AzureLoggerDemo", new string[] { "demo" }, new TimeSpan(0, 0, 30)
+            app.UseRequestLogger(new RequestLoggerOptions()
+            {
+                AzureTableName = "AzureLoggerDemo",
+                UrlsPatterns = new string[] { "demo" }
+            });
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>

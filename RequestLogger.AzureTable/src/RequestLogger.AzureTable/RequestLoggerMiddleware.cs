@@ -7,19 +7,20 @@
     using System;
     using System.Diagnostics;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Options;
     public class RequestLoggerMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
         private string[] _urlsPatterns;
 
-        public RequestLoggerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, string azureConnectionString, string azureTableName, string[] urlsPatterns = null, TimeSpan? interval = null)
+        public RequestLoggerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, IOptions<RequestLoggerOptions> options)
         {
             _next = next;
-            _urlsPatterns = urlsPatterns;
+            _urlsPatterns = options.Value.UrlsPatterns;
             _logger = loggerFactory.CreateLogger<RequestLoggerMiddleware>();
 
-            AzureTableService.Init(azureConnectionString, azureTableName, loggerFactory, interval);
+            AzureTableService.Init(options.Value.AzureConnectionString, options.Value.AzureTableName, loggerFactory, options.Value.Interval);
         }
 
         public async Task Invoke(HttpContext context)

@@ -27,8 +27,6 @@ namespace iflight.RequestLogger.AzureTable
 
         }
 
-        public readonly TimeSpan defaultInterval = new TimeSpan(0, 0, 20);
-
         private ILogger logger;
 
         private CloudTable cloudTable;
@@ -46,19 +44,19 @@ namespace iflight.RequestLogger.AzureTable
             throw new NotImplementedException("Use Init method!");
         }
 
-        private AzureTableService(string ConnectionString, string tableName, ILoggerFactory loggerFactory, TimeSpan? interval = null)
+        private AzureTableService(string ConnectionString, string tableName, ILoggerFactory loggerFactory, TimeSpan interval)
         {
             logger = loggerFactory.CreateLogger<AzureTableService>();
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConnectionString);
             var table = storageAccount.CreateCloudTableClient();
             cloudTable = table.GetTableReference(tableName);
             logEntities = new List<LogEntity>();
-            saveInterval = interval.HasValue ? interval.Value : defaultInterval;
+            saveInterval = interval;
             azureTableTask = new Task(async () => await SaveLoop());
             azureTableTask.Start();
         }
 
-        public async static void Init(string ConnectionString, string tableName, ILoggerFactory loggerFactory, TimeSpan? interval = null)
+        public async static void Init(string ConnectionString, string tableName, ILoggerFactory loggerFactory, TimeSpan interval)
         {
             if (instance != null)
             {
