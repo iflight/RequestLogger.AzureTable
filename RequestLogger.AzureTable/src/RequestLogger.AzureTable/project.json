@@ -2,6 +2,7 @@
   "version": "0.4.0",
   "title": "RequestLogger.AzureTable",
   "copyright": "Igor Vinogradov, 2016",
+  "authors": [ "Igor Vinogradov" ],
   "packOptions": {
     "summary": "RequestLogger.AzureTable Class Library allows to log requests to Azure Table Storage",
     "tags": [ "logging", "aspnet", "aspnetcore", "azure" ],
