@@ -41,9 +41,14 @@ namespace iflight.RequestLogger.AzureTable
             }
             catch (Exception e)
             {
-                exception = e.Message + "\r\n" + e.StackTrace;
+                exception = e.ToString();
+                throw e;
             }
-            AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
+            finally
+            {
+                AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
+            }
+
             return response;
         }
     }

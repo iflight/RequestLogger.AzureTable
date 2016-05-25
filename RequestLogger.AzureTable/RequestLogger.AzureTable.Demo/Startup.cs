@@ -42,8 +42,10 @@ namespace RequestLogger.AzureTable.Demo
             //@"UseDevelopmentStorage=true;", "AzureLoggerDemo", new string[] { "demo" }, new TimeSpan(0, 0, 30)
             app.UseRequestLogger(new RequestLoggerOptions()
             {
+                AzureConnectionString = "UseDevelopmentStorage=true;",
                 AzureTableName = "AzureLoggerDemo",
-                UrlsPatterns = new string[] { "demo" }
+                UrlsPatterns = new string[] { "demo" },
+                Interval = new TimeSpan(0,0,30)           
             });
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 

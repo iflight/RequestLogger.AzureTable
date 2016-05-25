@@ -28,7 +28,7 @@
       "version": "1.0.0-preview1-final",
       "type": "build"
     },
-    "RequestLogger.AzureTable": "0.3.0"
+    "RequestLogger.AzureTable": "0.4.0"
   },
 
   "tools": {

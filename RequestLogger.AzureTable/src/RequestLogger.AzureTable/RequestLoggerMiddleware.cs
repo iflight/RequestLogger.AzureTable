@@ -90,12 +90,16 @@
                 }
                 catch (Exception e)
                 {
-                    exception = e.Message + "\r\n" + e.StackTrace;
+                    exception = e.ToString();
 
-                    _logger.LogInformation(e.Message + "\r\n" + e.StackTrace);
+                    _logger.LogError(e.ToString());
+
+                    throw e;
                 }
-
-                AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
+                finally
+                {
+                    AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
+                }
 
                 _logger.LogInformation("Log to RequestLogger complete");
 
