@@ -1,5 +1,7 @@
 # RequestLogger.AzureTable
 
+NuGet package [RequestLogger.AzureTable](https://www.nuget.org/packages/RequestLogger.AzureTable/)
+
 ##How to use
 
 In Startup.cs:
