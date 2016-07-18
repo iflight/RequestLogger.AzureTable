@@ -90,7 +90,7 @@ namespace iflight.RequestLogger.AzureTable
         {
             while (true)
             {
-                logger.LogInformation("Try to save log to Azure Table");
+                logger.LogDebug("Try to save log to Azure Table");
                 try
                 {
                     if (logEntities.Any())
