@@ -51,6 +51,7 @@
 
                 _logger.LogInformation("Log to RequestLogger...");
 
+                var requestStream = context.Request.Body;
                 var requestBuffer = new MemoryStream();
                 await context.Request.Body.CopyToAsync(requestBuffer);
 
@@ -98,6 +99,9 @@
                 }
                 finally
                 {
+                    context.Request.Body = requestStream;
+                    context.Response.Body = responseStream;
+
                     AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
                 }
 

@@ -38,6 +38,8 @@ namespace RequestLogger.AzureTable.Demo
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseDeveloperExceptionPage();
+
             app.UseStaticFiles();
             //@"UseDevelopmentStorage=true;", "AzureLoggerDemo", new string[] { "demo" }, new TimeSpan(0, 0, 30)
             app.UseRequestLogger(new RequestLoggerOptions()
@@ -48,6 +50,20 @@ namespace RequestLogger.AzureTable.Demo
                 Interval = new TimeSpan(0,0,30)           
             });
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/fail/demo")
+                {
+                    throw new Exception();
+                }
+                if (context.Request.Path == "/fail/foobar")
+                {
+                    throw new Exception();
+                }
+                await next.Invoke();
+            });
+
 
             app.UseMvc(routes =>
             {
