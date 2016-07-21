@@ -44,7 +44,7 @@ namespace iflight.RequestLogger.AzureTable
             catch (Exception e)
             {
                 exception = e.ToString();
-                throw e;
+                throw;
             }
             finally
             {

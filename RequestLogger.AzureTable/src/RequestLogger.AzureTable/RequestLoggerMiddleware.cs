@@ -95,7 +95,7 @@
 
                     _logger.LogError(e.ToString());
 
-                    throw e;
+                    throw;
                 }
                 finally
                 {
