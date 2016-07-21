@@ -67,7 +67,7 @@ namespace iflight.RequestLogger.AzureTable
 
         }
 
-        public void Log(string request, string response, string path, string query, long requestLenght, long responseLenght, int statusCode, long totalTime, string exception)
+        public void Log(string request, string response, string path, string query, long requestLenght, long responseLenght, int statusCode, long totalTime, string exception, string ip = "")
         {
 
             LogEntity entity = new LogEntity(path.Trim('/').Replace('/', '-'));
@@ -80,6 +80,7 @@ namespace iflight.RequestLogger.AzureTable
             entity.TotalTime = totalTime;
             entity.StatusCode = statusCode;
             entity.Exception = exception;
+            entity.Ip = ip;
 
             mtx.WaitOne();
             logEntities.Add(entity);

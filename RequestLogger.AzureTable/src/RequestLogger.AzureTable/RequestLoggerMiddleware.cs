@@ -72,7 +72,7 @@
                 string responseBody = string.Empty;
                 long responseLenght = 0;
                 int code = 0;
-
+                string ip = context.Connection.RemoteIpAddress.ToString();
                 string exception = string.Empty;
                 try
                 {
@@ -102,7 +102,7 @@
                     context.Request.Body = requestStream;
                     context.Response.Body = responseStream;
 
-                    AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
+                    AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception, ip);
                 }
 
                 _logger.LogInformation("Log to RequestLogger complete");

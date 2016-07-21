@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
@@ -29,6 +30,7 @@ namespace iflight.RequestLogger.AzureTable
             long responseLenght = 0;
             int code = 0;
             string exception = string.Empty;
+            string ip = string.Empty;
 
             try
             {
@@ -46,7 +48,7 @@ namespace iflight.RequestLogger.AzureTable
             }
             finally
             {
-                AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception);
+                AzureTableService.Instance.Log(requestBody, responseBody, path, query, requestLenght, responseLenght, code, sw.ElapsedMilliseconds, exception,ip);
             }
 
             return response;

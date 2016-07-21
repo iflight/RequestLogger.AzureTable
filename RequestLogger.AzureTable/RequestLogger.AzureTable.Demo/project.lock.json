@@ -4173,9 +4173,9 @@
           "lib/dotnet5.4/Microsoft.WindowsAzure.Storage.dll": {}
         }
       },
-      "RequestLogger.AzureTable/0.4.0": {
+      "RequestLogger.AzureTable/0.4.1": {
         "type": "project",
-        "framework": ".NETStandard,Version=v1.0",
+        "framework": ".NETStandard,Version=v1.5",
         "dependencies": {
           "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
           "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final",
@@ -4183,10 +4183,10 @@
           "WindowsAzure.Storage": "6.2.2-preview"
         },
         "compile": {
-          "netstandard1.0/RequestLogger.AzureTable.dll": {}
+          "netstandard1.5/RequestLogger.AzureTable.dll": {}
         },
         "runtime": {
-          "netstandard1.0/RequestLogger.AzureTable.dll": {}
+          "netstandard1.5/RequestLogger.AzureTable.dll": {}
         }
       }
     }
@@ -10650,7 +10650,7 @@
         "lib/wpa/Microsoft.WindowsAzure.Storage.pdb"
       ]
     },
-    "RequestLogger.AzureTable/0.4.0": {
+    "RequestLogger.AzureTable/0.4.1": {
       "type": "project",
       "path": "../src/RequestLogger.AzureTable/project.json",
       "msbuildProject": "../src/RequestLogger.AzureTable/RequestLogger.AzureTable.xproj"
@@ -10673,7 +10673,7 @@
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0-rc2-final",
       "Microsoft.VisualStudio.Web.CodeGeneration.Tools >= 1.0.0-preview1-final",
       "Microsoft.VisualStudio.Web.CodeGenerators.Mvc >= 1.0.0-preview1-final",
-      "RequestLogger.AzureTable >= 0.4.0"
+      "RequestLogger.AzureTable >= 0.4.1"
     ],
     ".NETCoreApp,Version=v1.0": []
   },
